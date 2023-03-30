@@ -3,14 +3,14 @@
 import axios from 'axios';
 import * as TE from 'fp-ts/TaskEither'
 import * as HTTP from './common/http';
-import * as WithdrawalSingleton from './withdrawals/endpoints/singleton';
-import * as WithdrawalCollection from './withdrawals/endpoints/collection';
+import * as WithdrawalSingleton from './contract/withdrawal/endpoints/singleton';
+import * as WithdrawalCollection from './contract/withdrawal/endpoints/collection';
 import * as ContractSingleton from './contract/endpoints/singleton';
 import * as ContractCollection from './contract/endpoints/collection';
 import * as TransactionSingleton from './contract/transaction/endpoints/singleton';
 import * as TransactionCollection from './contract/transaction/endpoints/collection';
 import curlirize from 'axios-curlirize';
-import { MarloweJSONCodec } from '../common/json';
+import { MarloweJSONCodec } from '../adapter/json';
 
 
 export interface RestAPI {

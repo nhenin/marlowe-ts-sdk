@@ -12,8 +12,8 @@ import {formatValidationErrors} from 'io-ts-reporters'
 import {Contract} from '../../../../../../src/language/core/v1/semantics/contract'
 import * as path from 'path'
 import { fileURLToPath } from 'url';
-import {MarloweJSONCodec, minify} from '../../../../../../src/common/json'
-import { getFileContents } from '../../../../../../src/common/file';
+import {MarloweJSONCodec, minify} from '../../../../../../src/adapter/json'
+import { getFileContents } from '../../../../../../src/adapter/file';
 
 const getfilename = () => fileURLToPath(import.meta.url);
 export const currentDirectoryPath  = () => path.dirname(getfilename());

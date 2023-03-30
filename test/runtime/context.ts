@@ -1,10 +1,10 @@
 import { Network } from "lucid-cardano";
-import { Configuration, getPrivateKeyFromHexString } from "../../common/wallet";
+import { Context, getPrivateKeyFromHexString } from "../../src/adapter/wallet/lucid";
 
 
-export function getBlockfrostConfiguration () : Configuration {
+export function getBlockfrostContext () : Context {
     const { BLOCKFROST_URL, BLOCKFROST_PROJECT_ID, NETWORK_ID } = process.env;
-    return new Configuration ( BLOCKFROST_PROJECT_ID as string
+    return new Context ( BLOCKFROST_PROJECT_ID as string
                              , BLOCKFROST_URL  as string
                              , NETWORK_ID as Network);
   };

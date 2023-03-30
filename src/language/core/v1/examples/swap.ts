@@ -76,3 +76,42 @@ export const swapWithExpectedInputs
                                         , of_token: request.token
                                         , into_account: role('Token provider') }
         })
+
+
+// Slightly different version of where the providers need to withdraw themselves the token at the end.
+export const swapWithRequiredWithdrawal : ( adaDepositTimeout:Timeout
+        , tokenDepositTimeout:Timeout
+        , amountOfADA:bigint
+        , amountOfToken:bigint
+        , token:Token) => Contract 
+      = (adaDepositTimeout, tokenDepositTimeout,amountOfADA,amountOfToken,token) => 
+          ({ when :[{ case :{ party: role('Ada provider')  
+                                  , deposits: mulValue(constant(1_000_000n), amountOfADA)
+                                  , of_token: ada
+                                  , into_account: role('Ada provider')  
+                                  }
+                            , then : { when :[{ case :{ party: role('Token provider')
+                                                      , deposits: amountOfToken
+                                                      , of_token: token
+                                                      , into_account: role('Token provider') 
+                                                      }
+                                              , then : close 
+                                              }]
+                                      , timeout : tokenDepositTimeout
+                                      , timeout_continuation : close}}]
+                    , timeout : adaDepositTimeout
+                    , timeout_continuation : close})
+
+export const swapWithRequiredWithdrawalAndExpectedInputs 
+                : (request :SwapRequest )=> SwapWithExpectedInputs
+        = (request) =>
+                ({ swap : swapWithRequiredWithdrawal(request.adaDepositTimeout, request.tokenDepositTimeout,request.amountOfADA,request.amountOfToken,request.token)
+                , adaProviderInputDeposit : { input_from_party: role ('Ada provider')
+                                        , that_deposits: 1_000_000n * request.amountOfADA
+                                        , of_token: ada
+                                        , into_account: role('Ada provider') }
+                , tokenProviderInputDeposit : { input_from_party: role('Token provider')
+                                                , that_deposits: request.amountOfToken
+                                                , of_token: request.token
+                                                , into_account: role('Token provider') }
+                })   

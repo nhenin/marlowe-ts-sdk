@@ -1,12 +1,15 @@
 module.exports = {
+  
   projects: [
-    {
+    { 
       displayName: "e2e test",
       testMatch: ["./**/*.spec.e2e.ts"],
       runner: "jest-serial-runner",
       extensionsToTreatAsEsm: ['.ts'],
       preset: 'ts-jest/presets/default-esm',
       moduleNameMapper: {
+        '@runtime/(.*)': '<rootDir>/src/runtime/$1',
+        '@language/(.*)': '<rootDir>/src/language/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',
       },
       globalSetup: "./dotenv/dotenv-test.js",
@@ -22,12 +25,14 @@ module.exports = {
         ],
       },
     },
-    {
+    { 
       displayName: "parallel test",
       testMatch: ["./**/*.spec.ts"],
       extensionsToTreatAsEsm: ['.ts'],
       preset: 'ts-jest/presets/default-esm',
       moduleNameMapper: {
+        '@runtime/(.*)': '<rootDir>/src/runtime/$1',
+        '@language/(.*)': '<rootDir>/src/language/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',
       },
       globalSetup: "./dotenv/dotenv-test.js",
@@ -45,3 +50,4 @@ module.exports = {
     }
   ]
 };
+

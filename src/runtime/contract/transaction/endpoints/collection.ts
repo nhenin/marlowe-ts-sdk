@@ -1,27 +1,28 @@
-
-import { Metadata } from "../../../common/metadata";
-import { Header } from "../header";
-import * as TE from 'fp-ts/TaskEither'
-import * as HTTP from '../../../common/http';
-import { pipe } from 'fp-ts/lib/function';
-import { AxiosInstance } from "axios";
-import { unAddressBech32 } from "../../../common/address";
-import { Newtype, iso } from 'newtype-ts'
-import { fromNewtype, optionFromNullable } from 'io-ts-types';
-import { WalletDetails } from "../../../common/wallet";
-import { DecodingError } from "../../../common/codec";
 import * as t from "io-ts";
-import { ContractId, unContractId } from "../../id";
-import { TransactionId } from ".././id";
-import { TextEnvelope } from "../../../common/textEnvelope";
-import { MarloweVersion } from "../../../common/version";
-import { Input } from "../../../../language/core/v1/semantics/contract/when/input";
-import { ISO8601 } from "../../../common/iso8601";
-import { formatValidationErrors } from "io-ts-reporters";
+import { Newtype, iso } from 'newtype-ts'
 import * as E from 'fp-ts/Either'
 import * as A from 'fp-ts/Array'
 import * as O from 'fp-ts/lib/Option';
-import { Tags } from "../../../common/metadata/tag";
+import * as TE from 'fp-ts/TaskEither'
+import { formatValidationErrors } from "io-ts-reporters";
+import { fromNewtype, optionFromNullable } from 'io-ts-types';
+import { pipe } from 'fp-ts/lib/function';
+
+import { AxiosInstance } from "axios";
+
+import * as HTTP from '@runtime/common/http';
+import { unAddressBech32 } from "@runtime/common/address";
+import { Metadata } from "@runtime/common/metadata";
+import { WalletDetails } from "@runtime/common/wallet";
+import { DecodingError } from "@runtime/common/codec";
+import { TextEnvelope } from "@runtime/common/textEnvelope";
+import { MarloweVersion } from "@runtime/common/version";
+import { ISO8601 } from "@runtime/common/iso8601";
+import { Tags } from "@runtime/common/metadata/tag";
+import { Input } from "@language/core/v1/semantics/contract/when/input";
+import { Header } from "../header";
+import { TransactionId } from ".././id";
+import { ContractId, unContractId } from "../../id";
 
 export interface TransactionsRange extends Newtype<{ readonly TransactionsRange: unique symbol }, string> {}
 export const TransactionsRange = fromNewtype<TransactionsRange>(t.string)

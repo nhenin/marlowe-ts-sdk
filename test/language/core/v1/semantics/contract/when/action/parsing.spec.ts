@@ -7,8 +7,8 @@ import { pipe } from 'fp-ts/lib/function';
 import {formatValidationErrors} from 'io-ts-reporters'
 import {Action} from '../../../../../../../../src/language/core/v1/semantics/contract/when/action/'
 import * as path from 'path'
-import { MarloweJSONCodec, minify } from '../../../../../../../../src/common/json';
-import {  getFileContents } from '../../../../../../../../src/common/file';
+import { MarloweJSONCodec, minify } from '../../../../../../../../src/adapter/json';
+import {  getFileContents } from '../../../../../../../../src/adapter/file';
 import { fileURLToPath } from 'url';
 
 const getfilename = () => fileURLToPath(import.meta.url);

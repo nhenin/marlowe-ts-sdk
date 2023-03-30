@@ -5,25 +5,26 @@ import { AxiosInstance } from 'axios';
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/lib/function';
 import { Newtype, iso } from 'newtype-ts'
-import * as HTTP from '../../common/http';
+import * as HTTP from '../../../common/http';
 import { Header } from '../header';
 
 
-import { TextEnvelope } from '../../common/textEnvelope';
+import { TextEnvelope } from '../../../common/textEnvelope';
 
 import * as t from "io-ts";
 import { formatValidationErrors } from 'io-ts-reporters'
-import { DecodingError } from '../../common/codec';
+import { DecodingError } from '../../../common/codec';
 import * as E from 'fp-ts/Either'
 import * as A from 'fp-ts/Array'
-import { unAddressBech32 } from '../../common/address';
+import { unAddressBech32 } from '../../../common/address';
 
 import { fromNewtype, optionFromNullable } from 'io-ts-types';
 import * as O from 'fp-ts/lib/Option';
 
-import { WalletDetails } from '../../common/wallet';
-import { ContractId } from '../../contract/id';
-import { RoleName } from '../../contract/role';
+import { WalletDetails } from '../../../common/wallet';
+import { ContractId } from '../../id';
+import { RoleName } from '../../role';
+import { WithdrawalId } from '../id';
 
 
 export interface WithdrawalsRange extends Newtype<{ readonly WithdrawalsRange: unique symbol }, string> {}
@@ -66,15 +67,16 @@ export type POST = ( postWithdrawalsRequest: PostWithdrawalsRequest
 
 export type PostWithdrawalsRequest = t.TypeOf<typeof PostWithdrawalsRequest>
 export const PostWithdrawalsRequest 
-    = t.type({ contractId: ContractId, role: RoleName})
+    = t.type({ contractId: ContractId
+             , role: RoleName})
         
 
 export type WithdrawalTextEnvelope = t.TypeOf<typeof WithdrawalTextEnvelope>;
-export const WithdrawalTextEnvelope = t.type({ contractId:ContractId, tx : TextEnvelope})
+export const WithdrawalTextEnvelope = t.type({ withdrawalId: WithdrawalId, tx : TextEnvelope})
 
 export type PostResponse = t.TypeOf<typeof PostResponse>;
 export const PostResponse = t.type({
-    links   : t.type({ contract:t.string}),
+    links   : t.type({}),
     resource: WithdrawalTextEnvelope
     });
 
@@ -84,7 +86,7 @@ export const postViaAxios:(axiosInstance: AxiosInstance) => POST
                         ( '/withdrawals'
                         , postWithdrawalsRequest
                         , { headers: {
-                        'Accept': 'application/vendor.iog.marlowe-runtime.contract-tx-json',
+                        'Accept': 'application/vendor.iog.marlowe-runtime.withdraw-tx-json',
                         'Content-Type':'application/json',
                         'X-Change-Address': unAddressBech32(walletDetails.changeAddress),
                         'X-Address'         : pipe(walletDetails.usedAddresses      , A.fromOption, A.flatten, (a) => a.join(',')),

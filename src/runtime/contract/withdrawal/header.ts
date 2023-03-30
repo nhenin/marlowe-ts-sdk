@@ -1,9 +1,9 @@
 
 import * as t from "io-ts";
-import { BlockHeader } from "../common/block";
+import { BlockHeader } from "../../common/block";
 
 import { WithdrawalId } from "./id";
-import { TxStatus } from "../contract/transaction/status";
+import { TxStatus } from "../transaction/status";
 
 
 export type Header = t.TypeOf<typeof Header>

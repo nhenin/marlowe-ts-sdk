@@ -26,7 +26,7 @@ import { fromNewtype, optionFromNullable } from 'io-ts-types';
 import * as O from 'fp-ts/lib/Option';
 import { TxOutRef } from '../../common/tx/outRef';
 import { Contract } from '../../../language/core/v1/semantics/contract';
-import { WalletDetails } from 'runtime/common/wallet';
+import { WalletDetails } from '@runtime/common/wallet';
 
 
 export interface ContractsRange extends Newtype<{ readonly ContractsRange: unique symbol }, string> {}

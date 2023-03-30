@@ -3,14 +3,11 @@ import * as A from 'fp-ts/Array';
 import * as API from '@blockfrost/blockfrost-js'
 import { Blockfrost, Lucid, C, Network, PrivateKey, PolicyId, getAddressDetails, toUnit, fromText, NativeScript, Tx ,Core, TxSigned, TxComplete, Script, fromHex, toHex } from 'lucid-cardano';
 import * as O from 'fp-ts/Option'
-import { matchI } from 'ts-adt';
-import getUnixTime from 'date-fns/getUnixTime';
-import { addDays, addHours,addMinutes, addSeconds } from 'date-fns/fp'
-import { log } from './logging'
+import { log } from '../logging'
 import * as TE from 'fp-ts/TaskEither'
 import * as T from 'fp-ts/Task'
-import { addressBech32, AddressBech32, unAddressBech32 } from '../runtime/common/address';
-import { HexTransactionWitnessSet , MarloweTxCBORHex} from '../runtime/common/textEnvelope';
+import { addressBech32, AddressBech32, unAddressBech32 } from '@runtime/common/address';
+import { HexTransactionWitnessSet , MarloweTxCBORHex} from '@runtime/common/textEnvelope';
 
 export class Asset {
     policyId:string;
@@ -25,7 +22,7 @@ export class Asset {
 }
 export type Address = string;
 
-export class Configuration {
+export class Context {
     projectId:string;
     network:Network;
     blockfrostUrl:string
@@ -41,31 +38,31 @@ export const getPrivateKeyFromHexString = (privateKeyHex:string) : PrivateKey =>
 
 export class SingleAddressWallet {
     private privateKeyBech32: string;
-    private configuration:Configuration;
+    private context:Context;
     private lucid : Lucid;
     private blockfrostApi: API.BlockFrostAPI;
     
     public address : AddressBech32;
  
-    private constructor (configuration:Configuration,privateKeyBech32:PrivateKey) {
+    private constructor (context:Context,privateKeyBech32:PrivateKey) {
         this.privateKeyBech32 = privateKeyBech32;
-        this.configuration = configuration;
-        this.blockfrostApi = new API.BlockFrostAPI({projectId: configuration.projectId}); 
+        this.context = context;
+        this.blockfrostApi = new API.BlockFrostAPI({projectId: context.projectId}); 
     }
 
-    public static Initialise ( configuration:Configuration, privateKeyBech32: string) : T.Task<SingleAddressWallet> {
-        const account = new SingleAddressWallet(configuration,privateKeyBech32);
+    public static Initialise ( context:Context, privateKeyBech32: string) : T.Task<SingleAddressWallet> {
+        const account = new SingleAddressWallet(context,privateKeyBech32);
         return (() => account.initialise().then(() => account));
     }
 
-    public static Random ( configuration:Configuration) : T.Task<SingleAddressWallet> {
+    public static Random ( context:Context) : T.Task<SingleAddressWallet> {
         const privateKey = C.PrivateKey.generate_ed25519().to_bech32();
-        const account = new SingleAddressWallet(configuration,privateKey);
+        const account = new SingleAddressWallet(context,privateKey);
         return (() => account.initialise().then(() => account));
     }
 
     private async initialise () {
-        this.lucid = await Lucid.new(new Blockfrost(this.configuration.blockfrostUrl, this.configuration.projectId),this.configuration.network);
+        this.lucid = await Lucid.new(new Blockfrost(this.context.blockfrostUrl, this.context.projectId),this.context.network);
         this.lucid.selectWalletFromPrivateKey(this.privateKeyBech32);
         this.address = addressBech32(await this.lucid.wallet.address ());
      }

@@ -1,12 +1,12 @@
 
 import * as t from "io-ts";
-import { BlockHeader } from "../common/block";
+import { BlockHeader } from "../../common/block";
 
 import { WithdrawalId } from "./id";
-import { TxStatus } from "../contract/transaction/status";
-import { PolicyId } from "../common/policyId";
-import { TxOutRef } from "../common/tx/outRef";
-import { RoleName } from "../contract/role";
+import { TxStatus } from "../transaction/status";
+import { PolicyId } from "../../common/policyId";
+import { TxOutRef } from "../../common/tx/outRef";
+import { RoleName } from "../role";
 
 
 export type PayoutRef = t.TypeOf<typeof PayoutRef>

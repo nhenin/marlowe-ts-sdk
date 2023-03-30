@@ -2,7 +2,12 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "baseUrl": "src",
+        "baseUrl": "./",
+        "paths": 
+            { "@runtime/*": ["src/runtime/*"]
+            , "@language/*": ["src/language/*"]
+            , "src/*": ["src/*"] 
+            , "tests/*": ["__tests__/*"]},
         "declaration": true,
         "esModuleInterop": true,
         "inlineSourceMap": false,

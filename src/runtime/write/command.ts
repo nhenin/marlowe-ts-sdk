@@ -1,31 +1,33 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
-/* eslint-disable no-use-before-define */
+
 import * as TE from 'fp-ts/TaskEither'
-import * as ContractCollection from '../contract/endpoints/collection';
-import * as TransactionCollection from '../contract/transaction/endpoints/collection';
-import { DecodingError } from '../common/codec';
-import { ContractDetails } from '../contract/details';
+import * as ContractCollection from '@runtime/contract/endpoints/collection';
+import * as TransactionCollection from '@runtime/contract/transaction/endpoints/collection';
+import * as WithdrawalCollection from '@runtime/contract/withdrawal/endpoints/collection';
+import { DecodingError } from '@runtime/common/codec';
+import { ContractDetails } from '@runtime/contract/details';
 import { pipe } from 'fp-ts/function'
-import { WalletDetails } from '../common/wallet';
-import { HexTransactionWitnessSet, MarloweTxCBORHex } from '../common/textEnvelope';
-import { ContractId } from '../contract/id';
-import * as Contract from '../contract/id';
-import * as Tx from '../contract/transaction/id';
-import * as Transaction from '../contract/transaction/details';
-import { RestAPI } from 'runtime/endpoints';
+import { WalletDetails } from '@runtime/common/wallet';
+import { HexTransactionWitnessSet, MarloweTxCBORHex } from '@runtime/common/textEnvelope';
+import { ContractId } from '@runtime/contract/id';
+import * as Contract from '@runtime/contract/id';
+import * as Tx from '@runtime/contract/transaction/id';
+import * as Transaction from '@runtime/contract/transaction/details';
+import * as Withdrawal from '@runtime/contract/withdrawal/details';
+import * as WithdrawalId from '@runtime/contract/withdrawal/id';
+import { RestAPI } from '@runtime/endpoints';
 
 
 export type InitialisePayload  = ContractCollection.PostContractsRequest
 export type ApplyInputsPayload = TransactionCollection.PostTransactionsRequest
-
+export type WithdrawPayload = WithdrawalCollection.PostWithdrawalsRequest
 
 export const initialise : 
   (client : RestAPI)
   => (waitConfirmation : (txHash : string ) => TE.TaskEither<Error,boolean>)  
-    => (signAndRetrieveOnlyHexTransactionWitnessSet : (tx :MarloweTxCBORHex) => TE.TaskEither<Error,HexTransactionWitnessSet>)
-    => (walletDetails:WalletDetails) 
-    => (payload : InitialisePayload)
-    => TE.TaskEither<Error | DecodingError,ContractDetails> 
+  => (signAndRetrieveOnlyHexTransactionWitnessSet : (tx :MarloweTxCBORHex) => TE.TaskEither<Error,HexTransactionWitnessSet>)
+  => (walletDetails:WalletDetails) 
+  => (payload : InitialisePayload)
+  => TE.TaskEither<Error | DecodingError,ContractDetails> 
   = (client) => (waitConfirmation) => (sign)  => (walletDetails) => (payload) =>  
       pipe( client.contracts.post( payload, walletDetails)
           , TE.chainW((contractTextEnvelope) => 
@@ -44,7 +46,7 @@ export const applyInputs :
   => (contractId : ContractId) 
   => ( payload : ApplyInputsPayload) 
   => TE.TaskEither<Error | DecodingError,Transaction.Details> 
-  = (client) => (waitConfirmation) =>  (sign) => (walletDetails) => (contractId) => (payload) =>   
+  = (client) => (waitConfirmation) => (sign) => (walletDetails) => (contractId) => (payload) =>   
       pipe( client.contracts.contract.transactions.post(contractId, payload, walletDetails)
           , TE.chainW((transactionTextEnvelope) => 
                 pipe ( sign(transactionTextEnvelope.tx.cborHex)
@@ -54,3 +56,19 @@ export const applyInputs :
           , TE.chainFirstW((transactionId) => waitConfirmation(pipe(transactionId, Tx.idToTxId)))
           , TE.chainW ((transactionId) => 
               client.contracts.contract.transactions.transaction.get(contractId,transactionId)))
+
+export const withdraw : 
+    (client : RestAPI)
+    => (waitConfirmation : (txHash : string ) => TE.TaskEither<Error,boolean>)  
+    => (signAndRetrieveOnlyHexTransactionWitnessSet : (tx :MarloweTxCBORHex) => TE.TaskEither<Error,HexTransactionWitnessSet>)
+    => (walletDetails:WalletDetails) 
+    => ( payload : WithdrawPayload) 
+    => TE.TaskEither<Error | DecodingError,Withdrawal.Details> 
+    = (client) => (waitConfirmation) => (sign) => (walletDetails) => (payload) =>   
+        pipe( client.withdrawals.post (payload, walletDetails) 
+        , TE.chainW( (withdrawalTextEnvelope) =>
+            pipe ( sign(withdrawalTextEnvelope.tx.cborHex)  
+                , TE.chain ((hexTransactionWitnessSet) => client.withdrawals.withdrawal.put(withdrawalTextEnvelope.withdrawalId,hexTransactionWitnessSet))
+                , TE.map (() => withdrawalTextEnvelope.withdrawalId)))
+        , TE.chainFirstW((withdrawalId) => waitConfirmation(pipe(withdrawalId, WithdrawalId.idToTxId)))
+        , TE.chainW ((withdrawalId) => client.withdrawals.withdrawal.get(withdrawalId)) ) 
