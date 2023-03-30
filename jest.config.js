@@ -8,6 +8,7 @@ module.exports = {
       extensionsToTreatAsEsm: ['.ts'],
       preset: 'ts-jest/presets/default-esm',
       moduleNameMapper: {
+        '@adapter/(.*)': '<rootDir>/src/adapter/$1',
         '@runtime/(.*)': '<rootDir>/src/runtime/$1',
         '@language/(.*)': '<rootDir>/src/language/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',
@@ -26,11 +27,12 @@ module.exports = {
       },
     },
     { 
-      displayName: "parallel test",
+      displayName: "unit test",
       testMatch: ["./**/*.spec.ts"],
       extensionsToTreatAsEsm: ['.ts'],
       preset: 'ts-jest/presets/default-esm',
       moduleNameMapper: {
+        '@adapter/(.*)': '<rootDir>/src/adapter/$1',
         '@runtime/(.*)': '<rootDir>/src/runtime/$1',
         '@language/(.*)': '<rootDir>/src/language/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',

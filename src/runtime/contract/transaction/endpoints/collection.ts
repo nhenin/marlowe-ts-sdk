@@ -49,7 +49,7 @@ export const getHeadersByRangeViaAxios:(axiosInstance: AxiosInstance) => GETHead
 
 type GETByRangeRawResponse = t.TypeOf<typeof GETByRangeRawResponse>;
 const GETByRangeRawResponse 
-    = t.type({ data : t.type({ results : t.array(t.type({ links   : t.type({ transactions:t.string})
+    = t.type({ data : t.type({ results : t.array(t.type({ links   : t.type({ })
                                                         , resource: Header}))})
              , previousRange : optionFromNullable(TransactionsRange)
              , nextRange :optionFromNullable(TransactionsRange)

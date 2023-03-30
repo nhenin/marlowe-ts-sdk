@@ -21,8 +21,7 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
   const restApi = AxiosRestClient(getMarloweRuntimeUrl())
 
   it('can Build Apply Input Tx : ' + 
-     '(can POST: /contracts/{contractId}/transactions => ask to build the Tx to apply input on an initialised Marlowe Contract' +
-     ' and GET : /contracts/{contractId}/transactions => should see the unsigned transaction listed)', async () => {                           
+     '(can POST: /contracts/{contractId}/transactions => ask to build the Tx to apply input on an initialised Marlowe Contract)', async () => {                           
     await  
       pipe( initialiseBankAndverifyProvisionning
               (getMarloweRuntimeUrl())
@@ -49,9 +48,7 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
                         , { changeAddress: bank.address
                           , usedAddresses: O.none
                           , collateralUTxOs: O.none}) )
-                  , TE.chainW ((postResult) =>  
-                    restApi.contracts.contract.transactions.getHeadersByRange (postResult.contractId,O.none))
-                  , TE.map ((getResult) => expect(getResult.headers.length).toBe(1) ) ))
+                  ))
           , TE.map (({result}) => result)
           , TE.match(
               (e) => { console.dir(e, { depth: null }); expect(e).not.toBeDefined()},
@@ -62,7 +59,8 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
   it('can Apply Inputs : ' + 
      '(can POST: /contracts/{contractId}/transactions => ask to build the Tx to apply input on an initialised Marlowe Contract' + 
      ' ,   PUT:  /contracts/{contractId}/transactions/{transactionId} => Append the Applied Input Tx to the ledger' + 
-     ' and GET:  /contracts/{contractId}/transactions/{transactionId} => retrieve the Tx state)', async () => {
+     ' ,   GET:  /contracts/{contractId}/transactions/{transactionId} => retrieve the Tx state' +
+     ' and GET : /contracts/{contractId}/transactions => should see the unsigned transaction listed)', async () => {
     await  
       pipe( initialiseBankAndverifyProvisionning
               (getMarloweRuntimeUrl())
@@ -85,8 +83,10 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
                             , metadata : {}
                             , tags : {}}))
                   , TE.chainFirstW ((txDetails) => 
-                        bank.waitConfirmation(pipe(txDetails.transactionId, Tx.idToTxId)))))
-          , TE.map (({result}) => result)
+                        bank.waitConfirmation(pipe(txDetails.transactionId, Tx.idToTxId)))
+                  , TE.chainW ((postResult) =>  
+                      restApi.contracts.contract.transactions.getHeadersByRange (postResult.contractId,O.none))))
+          , TE.map (({result}) =>  expect(result.headers.length).toBe(1))
           , TE.match(
               (e) => { console.dir(e, { depth: null }); expect(e).not.toBeDefined()},
               () => {})
@@ -95,20 +95,18 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
 
   it('can navigate throught Apply Inputs Txs pages ' + 
           '(GET:  /contracts/{contractId}/transactions )', async () => {            
-    const exercise 
-      = pipe( initialiseBankAndverifyProvisionning
-                (getMarloweRuntimeUrl())
-                (getBlockfrostContext ())
-                (getBankPrivateKey()) 
-            , TE.bindW('firstPage' ,() => 
-                restApi.contracts.contract.transactions.getHeadersByRange
-                  (Contract.contractId("e72f18b5ec9afed70171b071192226b2625ca5f21716be8f9028ca392d75e899#1")
-                  ,O.none)) 
-            , TE.map (({firstPage}) => ({firstPage})))
-    
-    const result = await pipe(exercise, TE.match(
-      (e) => { console.dir(e, { depth: null }); expect(e).not.toBeDefined()},
-      () => {})) ()
+    await 
+       pipe( initialiseBankAndverifyProvisionning
+              (getMarloweRuntimeUrl())
+              (getBlockfrostContext ())
+              (getBankPrivateKey()) 
+          , TE.bindW('firstPage' ,() => 
+              restApi.contracts.contract.transactions.getHeadersByRange
+                (Contract.contractId("e72f18b5ec9afed70171b071192226b2625ca5f21716be8f9028ca392d75e899#1")
+                ,O.none)) 
+          , TE.match(
+              (e) => { console.dir(e, { depth: null }); expect(e).not.toBeDefined()},
+              () => {})) ()
     
                               
   },10_000)

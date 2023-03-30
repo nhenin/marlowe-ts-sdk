@@ -2,7 +2,7 @@ import * as t from "io-ts";
 
 
 export type  MetadatumLabel = t.TypeOf<typeof MetadatumLabel>
-export const MetadatumLabel = t.bigint
+export const MetadatumLabel = t.union([t.bigint,t.string])
 
 export type  Metadatum = t.TypeOf<typeof MetadatumLabel>
 export const Metadatum = t.UnknownRecord

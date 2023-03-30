@@ -2,15 +2,15 @@
 /* eslint-disable no-use-before-define */
 import axios from 'axios';
 import * as TE from 'fp-ts/TaskEither'
-import * as HTTP from './common/http';
-import * as WithdrawalSingleton from './contract/withdrawal/endpoints/singleton';
-import * as WithdrawalCollection from './contract/withdrawal/endpoints/collection';
-import * as ContractSingleton from './contract/endpoints/singleton';
-import * as ContractCollection from './contract/endpoints/collection';
-import * as TransactionSingleton from './contract/transaction/endpoints/singleton';
-import * as TransactionCollection from './contract/transaction/endpoints/collection';
-import curlirize from 'axios-curlirize';
-import { MarloweJSONCodec } from '../adapter/json';
+import * as HTTP from '@runtime/common/http';
+import * as WithdrawalSingleton from '@runtime/contract/withdrawal/endpoints/singleton';
+import * as WithdrawalCollection from '@runtime/contract/withdrawal/endpoints/collection';
+import * as ContractSingleton from '@runtime/contract/endpoints/singleton';
+import * as ContractCollection from '@runtime/contract/endpoints/collection';
+import * as TransactionSingleton from '@runtime/contract/transaction/endpoints/singleton';
+import * as TransactionCollection from '@runtime/contract/transaction/endpoints/collection';
+// import curlirize from 'axios-curlirize';
+import { MarloweJSONCodec } from '@adapter/json';
 
 
 export interface RestAPI {
@@ -48,7 +48,7 @@ export const AxiosRestClient = function (baseURL: string): RestAPI {
       , transformResponse: MarloweJSONCodec.decode
     })
     
-  curlirize(axiosInstance) // N.B for debugging (display all the calls executed in a "curl-ish" way) 
+  // curlirize(axiosInstance) // N.B for debugging (display all the calls executed in a "curl-ish" way) 
   return {
     healthcheck: () => HTTP.Get(axiosInstance)('/healthcheck'),
     withdrawals: {

@@ -86,9 +86,6 @@ export const initialiseBankAndverifyProvisionning
      (walletContext: Context) => 
      (bankPrivateKey : PrivateKeysAsHex) => 
        pipe( TE.Do
-        , TE.chainFirst(() => TE.of(log('############')))
-        , TE.chainFirst(() => TE.of(log('# Setup #')))
-        , TE.chainFirst(() => TE.of(log('############')))
         , T.bind('bank',() => SingleAddressWallet.Initialise (walletContext,bankPrivateKey))
         , TE.fromTask
         // Check Banks treasury

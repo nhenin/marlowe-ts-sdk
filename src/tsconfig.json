@@ -2,5 +2,5 @@
   "compilerOptions": {
     "module": "esnext"
   }, "extends": "../tsconfig.json",
-  "include": [ ".", "../test/runtime/context.ts" ]
+  "include": [ "." ]
 }
