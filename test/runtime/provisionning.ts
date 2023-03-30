@@ -94,8 +94,10 @@ export const initialiseBankAndverifyProvisionning
                     log(`Bank (${bank.address})`), 
               () => log(`  - ${ADA.format(bankBalance)}`)))) 
         , TE.chainFirst(({bankBalance})      => TE.of(expect(bankBalance).toBeGreaterThan(100_000_000)))
-        , TE.map (({bank}) => ({bank : bank
-            , initialise:initialise
+        , TE.map (({bank}) => 
+            ({ bank : bank
+             , restApi : AxiosRestClient(runtimeURL)
+             , initialise:initialise
                            (AxiosRestClient(runtimeURL)) 
                            (bank.waitConfirmation)
                            (bank.signMarloweTx)

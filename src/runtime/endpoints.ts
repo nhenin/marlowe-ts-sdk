@@ -1,5 +1,4 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
-/* eslint-disable no-use-before-define */
+
 import axios from 'axios';
 import * as TE from 'fp-ts/TaskEither'
 import * as HTTP from '@runtime/common/http';

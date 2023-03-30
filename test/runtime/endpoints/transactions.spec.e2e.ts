@@ -18,7 +18,7 @@ import { oneNotifyTrue } from '../../../src/language/core/v1/examples/contract-o
 
 describe('Contracts/{contractd}/Transactions endpoints', () => {
 
-  const restApi = AxiosRestClient(getMarloweRuntimeUrl())
+ 
 
   it('can Build Apply Input Tx : ' + 
      '(can POST: /contracts/{contractId}/transactions => ask to build the Tx to apply input on an initialised Marlowe Contract)', async () => {                           
@@ -28,7 +28,7 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
               (getBlockfrostContext ())
               (getBankPrivateKey()) 
           , TE.let (`notifyTimeout`,   () => pipe(Date.now(),addDays(1),datetoTimeout))
-          , TE.bind('result',({initialise,bank,notifyTimeout}) =>
+          , TE.bind('result',({restApi, initialise,bank,notifyTimeout}) =>
                 pipe
                   ( initialise
                     ( { contract: oneNotifyTrue(notifyTimeout)
@@ -67,7 +67,7 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
               (getBlockfrostContext ())
               (getBankPrivateKey()) 
           , TE.let (`notifyTimeout`,   () => pipe(Date.now(),addDays(1),datetoTimeout))
-          , TE.bind('result',({initialise,applyInputs,bank,notifyTimeout}) =>
+          , TE.bind('result',({restApi, initialise,applyInputs,bank,notifyTimeout}) =>
                 pipe
                   ( initialise
                     ( { contract: oneNotifyTrue(notifyTimeout)
@@ -100,7 +100,7 @@ describe('Contracts/{contractd}/Transactions endpoints', () => {
               (getMarloweRuntimeUrl())
               (getBlockfrostContext ())
               (getBankPrivateKey()) 
-          , TE.bindW('firstPage' ,() => 
+          , TE.bindW('firstPage' ,({restApi}) => 
               restApi.contracts.contract.transactions.getHeadersByRange
                 (Contract.contractId("e72f18b5ec9afed70171b071192226b2625ca5f21716be8f9028ca392d75e899#1")
                 ,O.none)) 
