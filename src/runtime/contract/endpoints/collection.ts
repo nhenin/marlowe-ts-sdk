@@ -42,7 +42,7 @@ export const getHeadersByRangeViaAxios:(axiosInstance: AxiosInstance) => GETHead
                  , previousRange: headers['prev-range']
                  , nextRange    : headers['next-range']}))
             , TE.chainW((data) => TE.fromEither(E.mapLeft(formatValidationErrors)(GETByRangeRawResponse.decode(data))))
-            , TE.map((rawResponse) =>  
+            , TE.map(rawResponse =>  
                 ({ headers: pipe(rawResponse.data.results,A.map((result) => result.resource))
                  , previousRange: rawResponse.previousRange
                  , nextRange    : rawResponse.nextRange})))

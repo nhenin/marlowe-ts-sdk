@@ -21,8 +21,8 @@ export const getViaAxios:(axiosInstance: AxiosInstance) => GET
         pipe(HTTP.Get(axiosInstance)
                 ( contractEndpoint(contractId)
                 , { headers: { Accept: 'application/json', 'Content-Type':'application/json'}})
-            , TE.chainW((data) => TE.fromEither(E.mapLeft(formatValidationErrors)(GETPayload.decode(data))))
-            , TE.map((payload) => payload.resource))
+            , TE.chainW( data => TE.fromEither(E.mapLeft(formatValidationErrors)(GETPayload.decode(data))))
+            , TE.map( payload => payload.resource))
 
 export type PUT = ( contractId: ContractId
                   , hexTransactionWitnessSet: HexTransactionWitnessSet) 

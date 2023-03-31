@@ -10,6 +10,7 @@ import * as TransactionSingleton from '@runtime/contract/transaction/endpoints/s
 import * as TransactionCollection from '@runtime/contract/transaction/endpoints/collection';
 // import curlirize from 'axios-curlirize';
 import { MarloweJSONCodec } from '@adapter/json';
+import { pipe } from 'fp-ts/lib/function';
 
 
 export interface RestAPI {
@@ -40,37 +41,37 @@ export interface RestAPI {
   }
 }
 
-export const AxiosRestClient = function (baseURL: string): RestAPI {
-  const axiosInstance = axios.create(
-    { baseURL:baseURL
-      , transformRequest: MarloweJSONCodec.encode
-      , transformResponse: MarloweJSONCodec.decode
-    })
-    
-  // curlirize(axiosInstance) // N.B for debugging (display all the calls executed in a "curl-ish" way) 
-  return {
-    healthcheck: () => HTTP.Get(axiosInstance)('/healthcheck'),
-    withdrawals: {
-      getHeadersByRange: WithdrawalCollection.getHeadersByRangeViaAxios(axiosInstance),
-      post: WithdrawalCollection.postViaAxios(axiosInstance),
-      withdrawal: {
-        get: WithdrawalSingleton.getViaAxios(axiosInstance),
-        put: WithdrawalSingleton.putViaAxios(axiosInstance)}}, 
-    contracts: {
-      getHeadersByRange:  ContractCollection.getHeadersByRangeViaAxios(axiosInstance),
-      post: ContractCollection.postViaAxios(axiosInstance),
-      contract: {
-        get: ContractSingleton.getViaAxios(axiosInstance),
-        put: ContractSingleton.putViaAxios(axiosInstance),
-        transactions: {
-          getHeadersByRange: TransactionCollection.getHeadersByRangeViaAxios(axiosInstance),
-          post: TransactionCollection.postViaAxios(axiosInstance),
-          transaction: {
-            get: TransactionSingleton.getViaAxios(axiosInstance),
-            put: TransactionSingleton.putViaAxios(axiosInstance)
-          }
-        }
-      }
-    }
-  }
-}
+export const AxiosRestClient : (baseURL: string) =>  RestAPI = 
+  (baseURL) => 
+     pipe(axios.create
+            ({ baseURL:baseURL
+              , transformRequest: MarloweJSONCodec.encode
+              , transformResponse: MarloweJSONCodec.decode
+            })
+         , (axiosInstance) => 
+             ({ healthcheck: () => HTTP.Get(axiosInstance)('/healthcheck')
+              , withdrawals: 
+                  { getHeadersByRange: WithdrawalCollection.getHeadersByRangeViaAxios(axiosInstance)
+                  , post: WithdrawalCollection.postViaAxios(axiosInstance)
+                  , withdrawal: 
+                    { get: WithdrawalSingleton.getViaAxios(axiosInstance)
+                    , put: WithdrawalSingleton.putViaAxios(axiosInstance)}
+                  }
+              , contracts: 
+                { getHeadersByRange:  ContractCollection.getHeadersByRangeViaAxios(axiosInstance)
+                , post: ContractCollection.postViaAxios(axiosInstance)
+                , contract: 
+                    { get: ContractSingleton.getViaAxios(axiosInstance)
+                    , put: ContractSingleton.putViaAxios(axiosInstance)
+                    , transactions: 
+                      { getHeadersByRange: TransactionCollection.getHeadersByRangeViaAxios(axiosInstance)
+                      , post: TransactionCollection.postViaAxios(axiosInstance)
+                      , transaction: 
+                        { get: TransactionSingleton.getViaAxios(axiosInstance)
+                        , put: TransactionSingleton.putViaAxios(axiosInstance)
+                      }
+                    }
+                  }
+                }
+              }))
+

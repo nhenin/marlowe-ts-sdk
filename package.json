@@ -1,7 +1,7 @@
 {
   "name": "marlowe-ts-sdk",
   "version": "0.0.1",
-  "description": "Marlowe Runtime Client for building Marlowe Contracts",
+  "description": "Marlowe Runtime SDK for building Marlowe Contracts",
   "engines": {
     "node": ">=14.20.1"
   },
