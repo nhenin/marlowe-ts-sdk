@@ -18,7 +18,7 @@
         "noFallthroughCasesInSwitch": true,
         "pretty": true,
         "resolveJsonModule": true,
-        "rootDir": "src",
+        "rootDirs": ["src","test"],
         "skipLibCheck": true,
         "strict": true,
         "traceResolution": false,
