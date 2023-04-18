@@ -20,7 +20,9 @@ export const getViaAxios:(axiosInstance: AxiosInstance) => GET
     = (axiosInstance) => (contractId) => 
         pipe(HTTP.Get(axiosInstance)
                 ( contractEndpoint(contractId)
-                , { headers: { Accept: 'application/json', 'Content-Type':'application/json'}})
+                , { headers: { Accept: 'application/json'
+                             , 'Access-Control-Request-Headers' : ['Range', 'Accept']
+                             , 'Content-Type':'application/json'}})
             , TE.chainW( data => TE.fromEither(E.mapLeft(formatValidationErrors)(GETPayload.decode(data))))
             , TE.map( payload => payload.resource))
 
@@ -33,10 +35,10 @@ export const putViaAxios:(axiosInstance: AxiosInstance) => PUT
         pipe(HTTP.Put(axiosInstance)
                 ( contractEndpoint(contractId)
                 , transactionWitnessSetTextEnvelope(hexTransactionWitnessSet)
-                , { headers: { Accept: 'application/json', 'Content-Type':'application/json'}})
+                , { headers: { Accept: 'application/json'
+                            , 'Access-Control-Request-Headers' : ['Range', 'Accept']
+                            , 'Content-Type':'application/json'}})
             )
-
-
 
 const contractEndpoint = (contractId: ContractId):string => 
     (`/contracts/${encodeURIComponent(unContractId(contractId))}`)
