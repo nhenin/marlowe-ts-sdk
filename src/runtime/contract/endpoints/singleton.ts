@@ -3,12 +3,12 @@ import { AxiosInstance } from 'axios';
 import * as E from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/lib/function';
-import * as HTTP from '@runtime/common/http';
-import { HexTransactionWitnessSet, transactionWitnessSetTextEnvelope } from '@runtime/common/textEnvelope';
+import * as HTTP from '../../../runtime/common/http';
+import { HexTransactionWitnessSet, transactionWitnessSetTextEnvelope } from '../../../runtime/common/textEnvelope';
 import { ContractDetails } from '../details';
 import * as t from "io-ts";
 import {formatValidationErrors} from 'io-ts-reporters'
-import { DecodingError } from '@runtime/common/codec';
+import { DecodingError } from '../../../runtime/common/codec';
 import { ContractId, unContractId } from '../id';
 
 export type GET = ( contractId: ContractId) => TE.TaskEither<Error | DecodingError, ContractDetails>

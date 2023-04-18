@@ -3,11 +3,6 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "baseUrl": "./",
-        "paths": 
-            { "@adapter/*": ["src/adapter/*"]
-            , "@runtime/*": ["src/runtime/*"]
-            , "@language/*": ["src/language/*"]
-            },
         "declaration": true,
         "esModuleInterop": true,
         "inlineSourceMap": false,
