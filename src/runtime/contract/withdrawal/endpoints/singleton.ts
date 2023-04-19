@@ -20,7 +20,7 @@ export const getViaAxios:(axiosInstance: AxiosInstance) => GET
     = (axiosInstance) => (withdrawalId) => 
         pipe(HTTP.Get(axiosInstance)
                 ( endpointURI(withdrawalId)
-                , { headers: { Accept: 'application/json', 'Access-Control-Request-Headers' : ['Range', 'Accept'],'Content-Type':'application/json'}})
+                , { headers: { Accept: 'application/json','Content-Type':'application/json'}})
             , TE.chainW((data) => TE.fromEither(E.mapLeft(formatValidationErrors)(Details.decode(data)))))
 
 export type PUT = ( withdrawalId: WithdrawalId
@@ -32,7 +32,7 @@ export const putViaAxios:(axiosInstance: AxiosInstance) => PUT
         pipe(HTTP.Put(axiosInstance)
                 ( endpointURI(withdrawalId)
                 , transactionWitnessSetTextEnvelope(hexTransactionWitnessSet)
-                , { headers: { Accept: 'application/json', 'Access-Control-Request-Headers' : ['Range', 'Accept'],'Content-Type':'application/json'}})
+                , { headers: { Accept: 'application/json', 'Content-Type':'application/json'}})
             )
 
 
