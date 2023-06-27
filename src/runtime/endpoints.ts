@@ -45,12 +45,6 @@ const interceptRequest = (axiosInstance: AxiosInstance) => axiosInstance.interce
   return request
 })
 
-const interceptResponse = (axiosInstance: AxiosInstance) => axiosInstance.interceptors.response.use(response => {
-  console.log('Response:', JSON.stringify(response, null, 2))
-  return response
-})
- 
-
 
 export const AxiosRestClient : (baseURL: string) =>  RestAPI = 
   (baseURL) => 
@@ -59,7 +53,7 @@ export const AxiosRestClient : (baseURL: string) =>  RestAPI =
               , transformRequest: MarloweJSONCodec.encode
               , transformResponse: MarloweJSONCodec.decode
             })
-        //  , (axiosInstance) => { curlirize(axiosInstance); return axiosInstance}
+        //  , (axiosInstance) => { interceptRequest(axiosInstance); return axiosInstance}
          , (axiosInstance) => 
              ({ healthcheck: () => HTTP.Get(axiosInstance)('/healthcheck')
               , withdrawals: 
@@ -86,4 +80,6 @@ export const AxiosRestClient : (baseURL: string) =>  RestAPI =
                   }
                 }
               }))
+
+
 
