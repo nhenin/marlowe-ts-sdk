@@ -13,15 +13,15 @@ import * as Tx from '../../runtime/contract/transaction/id';
 import * as Transaction from '../../runtime/contract/transaction/details';
 import * as Withdrawal from '../../runtime/contract/withdrawal/details';
 import * as WithdrawalId from '../../runtime/contract/withdrawal/id';
-import { RestAPI } from '../../runtime/endpoints';
-import { WalletAPI, getAddressesAndCollaterals } from '../wallet';
+import { RuntimeClientAPI } from '../client';
+import { WalletAPI, getAddressesAndCollaterals } from '../../wallet/api';
 
 export type InitialisePayload  = ContractCollection.PostContractsRequest
 export type ApplyInputsPayload = TransactionCollection.PostTransactionsRequest
 export type WithdrawPayload = WithdrawalCollection.PostWithdrawalsRequest
 
 export const initialise 
-  :  (client : RestAPI)
+  :  (client : RuntimeClientAPI)
   => (wallet : WalletAPI)
   => (payload : InitialisePayload)
   => TE.TaskEither<Error | DecodingError,ContractDetails> 
@@ -38,7 +38,7 @@ export const initialise
           , TE.chainW ((contractId) => client.contracts.contract.get(contractId)))
 
 export const applyInputs 
-  :  (client : RestAPI)
+  :  (client : RuntimeClientAPI)
   => (wallet : WalletAPI)
   => (contractId : ContractId) 
   => (payload : ApplyInputsPayload) 
@@ -57,7 +57,7 @@ export const applyInputs
               client.contracts.contract.transactions.transaction.get(contractId,transactionId)))
 
 export const withdraw 
-    :  (client : RestAPI)
+    :  (client : RuntimeClientAPI)
     => (wallet : WalletAPI) 
     => (payload : WithdrawPayload) 
     => TE.TaskEither<Error | DecodingError,Withdrawal.Details> 

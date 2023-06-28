@@ -10,7 +10,7 @@ import { Metadata } from "../../runtime/common/metadata";
 import { TxStatus } from "./transaction/status";
 import { TxOutRef } from "../../runtime/common/tx/outRef";
 import { Contract } from "../../language/core/v1/semantics/contract";
-import { MarloweState } from "../../runtime/common/state";
+import { MarloweState } from "../../language/core/v1/semantics/state";
 import { RoleName } from "./role";
 
 

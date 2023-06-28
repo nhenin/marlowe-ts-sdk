@@ -1,18 +1,19 @@
 
 import axios, { AxiosInstance } from 'axios';
 import * as TE from 'fp-ts/TaskEither'
-import * as HTTP from '../runtime/common/http';
-import * as WithdrawalSingleton from '../runtime/contract/withdrawal/endpoints/singleton';
-import * as WithdrawalCollection from '../runtime/contract/withdrawal/endpoints/collection';
-import * as ContractSingleton from '../runtime/contract/endpoints/singleton';
-import * as ContractCollection from '../runtime/contract/endpoints/collection';
-import * as TransactionSingleton from '../runtime/contract/transaction/endpoints/singleton';
-import * as TransactionCollection from '../runtime/contract/transaction/endpoints/collection';
+import * as HTTP from './common/http';
+import * as WithdrawalSingleton from './contract/withdrawal/endpoints/singleton';
+import * as WithdrawalCollection from './contract/withdrawal/endpoints/collection';
+import * as ContractSingleton from './contract/endpoints/singleton';
+import * as ContractCollection from './contract/endpoints/collection';
+import * as TransactionSingleton from './contract/transaction/endpoints/singleton';
+import * as TransactionCollection from './contract/transaction/endpoints/collection';
+import * as ContractNext from './contract/next/endpoint';
 import { MarloweJSONCodec } from '../adapter/json';
 import { pipe } from 'fp-ts/lib/function';
 
 
-export interface RestAPI {
+export interface RuntimeClientAPI {
   healthcheck : () => TE.TaskEither<Error,Boolean>
   withdrawals: {
     getHeadersByRange: WithdrawalCollection.GETHeadersByRange
@@ -28,6 +29,7 @@ export interface RestAPI {
     contract: {
       get: ContractSingleton.GET
       put: ContractSingleton.PUT
+      next: ContractNext.GET
       transactions: {
         getHeadersByRange: TransactionCollection.GETHeadersByRange
         post: TransactionCollection.POST
@@ -46,7 +48,7 @@ const interceptRequest = (axiosInstance: AxiosInstance) => axiosInstance.interce
 })
 
 
-export const AxiosRestClient : (baseURL: string) =>  RestAPI = 
+export const RuntimeClient : (baseURL: string) =>  RuntimeClientAPI = 
   (baseURL) => 
      pipe(axios.create
             ({ baseURL:baseURL
@@ -69,6 +71,7 @@ export const AxiosRestClient : (baseURL: string) =>  RestAPI =
                 , contract: 
                     { get: ContractSingleton.getViaAxios(axiosInstance)
                     , put: ContractSingleton.putViaAxios(axiosInstance)
+                    , next: ContractNext.getViaAxios(axiosInstance)
                     , transactions: 
                       { getHeadersByRange: TransactionCollection.getHeadersByRangeViaAxios(axiosInstance)
                       , post: TransactionCollection.postViaAxios(axiosInstance)

@@ -24,7 +24,7 @@ import { unAddressBech32 } from '../../../runtime/common/address';
 import { fromNewtype, optionFromNullable } from 'io-ts-types';
 import * as O from 'fp-ts/lib/Option';
 import { Contract } from '../../../language/core/v1/semantics/contract';
-import { AddressesAndCollaterals } from '../../wallet';
+import { AddressesAndCollaterals } from '../../../wallet/api';
 import { stringify } from 'qs';
 import { unTxOutRef } from '../../common/tx/outRef';
 

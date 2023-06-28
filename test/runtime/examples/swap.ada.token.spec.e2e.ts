@@ -7,6 +7,7 @@ import * as TE from 'fp-ts/TaskEither'
 import { getBankPrivateKey, getBlockfrostContext, getMarloweRuntimeUrl } from '../context';
 import { datetoTimeout } from '../../../src/language/core/v1/semantics/contract/when'
 import { provisionAnAdaAndTokenProvider } from '../provisionning'
+import { RuntimeClient } from '../../../src/runtime/client';
 
 
 describe('swap', () => {
@@ -20,21 +21,20 @@ describe('swap', () => {
   
     await 
       pipe( provisionAnAdaAndTokenProvider 
-               (getMarloweRuntimeUrl())
+               (RuntimeClient(getMarloweRuntimeUrl()))
                (getBlockfrostContext ())
                (getBankPrivateKey())
                (provisionScheme)
-            , TE.let (`swapRequest`,       ({tokenAsset}) => 
+            , TE.let (`swapRequest`,       ({tokenMinted}) => 
                 ({ adaDepositTimeout   : pipe(Date.now(),addDays(1),datetoTimeout)
                  , tokenDepositTimeout : pipe(Date.now(),addDays(2),datetoTimeout)
                  , amountOfADA   : 3n
                  , amountOfToken : 10n
-                 , token :tokenAsset }))
+                 , token :tokenMinted }))
             , TE.let (`swapWithExpectedInputs`, ({swapRequest}) => 
                   Examples.swapAdaTokenWithExpectedInputs(swapRequest))
-            , TE.bindW('swapClosedResult',({initialise,applyInputs,adaProvider,tokenProvider,swapWithExpectedInputs}) => 
-                  pipe( initialise 
-                          (adaProvider)
+            , TE.bindW('swapClosedResult',({sdk,adaProvider,tokenProvider,swapWithExpectedInputs}) => 
+                  pipe( sdk(adaProvider).commands.initialise 
                           ( { contract: swapWithExpectedInputs.swap
                             , roles: {'Ada provider'   : adaProvider.address 
                                      ,'Token provider' : tokenProvider.address}
@@ -43,16 +43,14 @@ describe('swap', () => {
                             , tags : {}
                             , minUTxODeposit: 3_000_000})
                       , TE.chainW ((contractDetails) =>       
-                          applyInputs
-                            (adaProvider)
+                        sdk(adaProvider).commands.applyInputs
                             (contractDetails.contractId)
                             ({ version : "v1"
                               , inputs : [swapWithExpectedInputs.adaProviderInputDeposit]
                               , metadata : {}
                               , tags : {}}))
                       , TE.chainW ((contractDetails) =>       
-                           applyInputs
-                              (tokenProvider)
+                        sdk(tokenProvider).commands.applyInputs
                               (contractDetails.contractId)
                               ({ version : "v1"
                                 , inputs : [swapWithExpectedInputs.tokenProviderInputDeposit]

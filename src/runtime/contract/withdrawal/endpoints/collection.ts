@@ -21,7 +21,7 @@ import { unAddressBech32 } from '../../../common/address';
 import { fromNewtype, optionFromNullable } from 'io-ts-types';
 import * as O from 'fp-ts/lib/Option';
 
-import { AddressesAndCollaterals } from '../../../wallet';
+import { AddressesAndCollaterals } from '../../../../wallet/api';
 import { ContractId } from '../../id';
 import { RoleName } from '../../role';
 import { WithdrawalId } from '../id';
