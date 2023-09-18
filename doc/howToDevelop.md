@@ -122,6 +122,10 @@ $ npm t && npm run test:e2e
 $ npm --workspaces pack --pack-destination dist
 ```
 
+```bash
+$ npm --workspaces publish
+```
+
 And in a separate project you can install the tarballs using a file url when declaring the dependency
 
 ```json
